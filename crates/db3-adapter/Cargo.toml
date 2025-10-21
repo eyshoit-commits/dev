@@ -1,0 +1,29 @@
+[package]
+name = "db3-adapter"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "HelixDB plugin adapter for DB3 archival"
+
+[dependencies]
+anyhow.workspace = true
+async-trait.workspace = true
+bytes.workspace = true
+hex.workspace = true
+reqwest.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha3.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+validator.workspace = true
+serde_yaml.workspace = true
+url.workspace = true
+ed25519-dalek.workspace = true
+helix-db = { path = "../helix-db", optional = true }
+
+[features]
+default = ["helix"]
+helix = ["helix-db"]

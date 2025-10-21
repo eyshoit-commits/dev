@@ -1,0 +1,28 @@
+[package]
+name = "pgml-adapter"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "HelixDB plugin adapter for pgML"
+
+[dependencies]
+anyhow.workspace = true
+async-trait.workspace = true
+bytes.workspace = true
+hex.workspace = true
+reqwest.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha3.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+validator.workspace = true
+helix-db = { path = "../helix-db", optional = true }
+serde_yaml.workspace = true
+url.workspace = true
+
+[features]
+default = ["helix"]
+helix = ["helix-db"]

@@ -1,0 +1,42 @@
+# BrainDB reference configuration
+
+data_dir: ./data
+rest:
+  bind_addr: 0.0.0.0:6969
+  cors_allowed_origins: []
+security:
+  api_keys: []
+  jwt_issuer: null
+  jwt_audience: null
+  rbac_roles:
+    admin:
+      - query.read
+      - documents.write
+      - metrics.read
+      - plugins.register
+telemetry:
+  prometheus_endpoint: 0.0.0.0:9600
+  enable_logs: true
+feature_flags:
+  braindb:
+    - graph
+    - vector
+    - fts
+    - mcp
+  pgml:
+    - gpu
+    - pgvector
+  db3:
+    - arweave
+    - wallets
+plugins:
+  pgml:
+    base_url: https://pgml.internal
+    api_key: null
+    jwt: null
+    extra: {}
+  db3:
+    base_url: https://db3.internal
+    api_key: null
+    jwt: null
+    extra: {}
