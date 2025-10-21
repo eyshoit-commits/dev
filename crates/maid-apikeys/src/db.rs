@@ -215,6 +215,39 @@ impl Database {
         }
     }
 
+    pub fn find_api_key_by_id(&self, id: &str) -> anyhow::Result<Option<ApiKeyRecord>> {
+        let conn = self.conn.lock();
+        let mut stmt = conn.prepare(
+            "SELECT id, user_id, name, prefix, key_hash, scopes_json, created_at, expires_at, revoked, last_used
+             FROM api_keys WHERE id = ?1",
+        )?;
+        let mut rows = stmt.query([id])?;
+        if let Some(row) = rows.next()? {
+            Ok(Some(ApiKeyRecord {
+                id: row.get(0)?,
+                user_id: row.get(1)?,
+                name: row.get(2)?,
+                prefix: row.get(3)?,
+                key_hash: row.get(4)?,
+                scopes: serde_json::from_str(&row.get::<_, String>(5)?)?,
+                created_at: DateTime::parse_from_rfc3339(&row.get::<_, String>(6)?)?
+                    .with_timezone(&Utc),
+                expires_at: row
+                    .get::<_, Option<String>>(7)?
+                    .map(|v| DateTime::parse_from_rfc3339(&v).map(|dt| dt.with_timezone(&Utc)))
+                    .transpose()?,
+                revoked: row.get::<_, i64>(8)? == 1,
+                last_used: row
+                    .get::<_, Option<String>>(9)?
+                    .map(|v| DateTime::parse_from_rfc3339(&v).map(|dt| dt.with_timezone(&Utc)))
+                    .transpose()?,
+                plain_key: None,
+            }))
+        } else {
+            Ok(None)
+        }
+    }
+
     pub fn list_api_keys(&self, user_id: &str) -> anyhow::Result<Vec<ApiKeyRecord>> {
         let conn = self.conn.lock();
         let mut stmt = conn.prepare(
