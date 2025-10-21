@@ -1,0 +1,53 @@
+[workspace]
+members = [
+    "crates/maid-core",
+    "crates/maid-apikeys",
+    "crates/maid-mistral"
+]
+resolver = "2"
+
+[workspace.package]
+edition = "2021"
+version = "1.0.0"
+authors = ["MAID Project Team"]
+license = "Apache-2.0"
+
+[workspace.dependencies]
+anyhow = "1.0"
+async-trait = "0.1"
+axum = { version = "0.7", features = ["ws", "macros"] }
+axum-extra = { version = "0.9", features = ["typed-header"] }
+chrono = { version = "0.4", features = ["serde"] }
+config = "0.14"
+dashmap = "5.5"
+dirs = "5.0"
+jsonwebtoken = "9.3"
+parking_lot = "0.12"
+rand = "0.8"
+reqwest = { version = "0.12", features = ["json", "stream", "rustls-tls"] }
+rusqlite = { version = "0.31", features = ["bundled", "chrono"] }
+schemars = "0.8"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+serde_with = { version = "3.6", features = ["chrono"] }
+thiserror = "1.0"
+tokio = { version = "1.37", features = ["macros", "rt-multi-thread", "signal", "sync", "time"] }
+tokio-stream = "0.1"
+tokio-util = "0.7"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
+uuid = { version = "1", features = ["serde", "v4"] }
+validator = { version = "0.16", features = ["derive"] }
+warp = "0.3"
+axum-server = { version = "0.6", features = ["tls-rustls"] }
+axum_typed_websockets = "0.9"
+sea-orm = { version = "0.12", default-features = false, features = ["macros", "runtime-tokio-rustls", "sqlx-sqlite", "with-json", "with-chrono", "debug-print"] }
+serde_yaml = "0.9"
+ring = "0.17"
+data-encoding = "2.5"
+argon2 = "0.5"
+lettre = { version = "0.11", default-features = false, features = ["smtp-transport", "builder", "tokio1", "tokio1-rustls-tls"] }
+validator_derive = "0.16"
+bytes = "1"
+axum-sse = "0.5"
+csv = "1.3"

@@ -1,0 +1,37 @@
+[package]
+name = "maid-core"
+edition.workspace = true
+version.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+async-trait.workspace = true
+axum.workspace = true
+axum-extra.workspace = true
+axum-server.workspace = true
+axum_typed_websockets.workspace = true
+bytes.workspace = true
+chrono.workspace = true
+config.workspace = true
+dashmap.workspace = true
+jsonwebtoken.workspace = true
+parking_lot.workspace = true
+reqwest.workspace = true
+rusqlite.workspace = true
+schemars.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+serde_with.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+tokio-stream.workspace = true
+tokio-util.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+uuid.workspace = true
+validator.workspace = true
+serde_yaml.workspace = true
+ring.workspace = true
+data-encoding.workspace = true

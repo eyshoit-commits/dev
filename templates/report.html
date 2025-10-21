@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Goose Run Report {{run_id}}</title>
+  <style>
+    body { font-family: "Inter", system-ui, sans-serif; margin: 2rem; background: #0f172a; color: #e2e8f0; }
+    h1 { color: #38bdf8; }
+    table { border-collapse: collapse; width: 100%; margin-top: 1.5rem; }
+    th, td { border: 1px solid #1e293b; padding: 0.75rem; text-align: left; }
+    th { background: #1e293b; }
+    tr:nth-child(even) { background: #0f172a; }
+    .kpi { display: flex; gap: 2rem; margin-top: 1rem; }
+    .kpi div { background: #1e293b; padding: 1rem; border-radius: 0.75rem; }
+  </style>
+</head>
+<body>
+  <h1>Goose Run Report {{run_id}}</h1>
+  <p>Generated at {{generated}}</p>
+  <div class="kpi">
+    <div><strong>Samples</strong><br><span id="sample-count"></span></div>
+    <div><strong>Average RPS</strong><br><span id="avg-rps"></span></div>
+    <div><strong>Error Rate</strong><br><span id="avg-error"></span></div>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Timestamp</th>
+        <th>Phase</th>
+        <th>RPS</th>
+        <th>Error %</th>
+        <th>p95 (ms)</th>
+      </tr>
+    </thead>
+    <tbody id="rows"></tbody>
+  </table>
+  <script>
+    const data = {{metrics}};
+    const rows = document.getElementById('rows');
+    let totalRps = 0;
+    let totalError = 0;
+    data.forEach(snapshot => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${new Date(snapshot.timestamp).toLocaleString()}</td>
+        <td>${snapshot.phase}</td>
+        <td>${snapshot.throughput_rps.toFixed(2)}</td>
+        <td>${snapshot.error_rate.toFixed(2)}</td>
+        <td>${snapshot.latency_p95_ms.toFixed(2)}</td>`;
+      rows.appendChild(tr);
+      totalRps += snapshot.throughput_rps;
+      totalError += snapshot.error_rate;
+    });
+    document.getElementById('sample-count').textContent = data.length;
+    document.getElementById('avg-rps').textContent = (totalRps / data.length).toFixed(2);
+    document.getElementById('avg-error').textContent = (totalError / data.length).toFixed(2);
+  </script>
+</body>
+</html>
