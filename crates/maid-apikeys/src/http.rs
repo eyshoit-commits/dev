@@ -9,6 +9,7 @@ use axum::Extension;
 use axum::{Json, Router};
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
+use std::collections::BTreeSet;
 use std::sync::Arc;
 use thiserror::Error;
 use tracing::warn;
@@ -295,7 +296,18 @@ async fn create_api_key(
         .prefix
         .clone()
         .unwrap_or_else(|| state.settings().security.default_api_key_prefix.clone());
-    let scopes = merge_scopes(&account.scopes, &request.scopes);
+    let account_scopes: BTreeSet<_> = account.scopes.iter().cloned().collect();
+    let scopes: Vec<String> = if request.scopes.is_empty() {
+        account_scopes.iter().cloned().collect()
+    } else {
+        let requested: BTreeSet<_> = request.scopes.iter().cloned().collect();
+        if !requested.is_subset(&account_scopes) {
+            return Err(ApiError::Unauthorized(
+                "requested scopes not permitted".into(),
+            ));
+        }
+        requested.into_iter().collect()
+    };
     let record = state.db().create_api_key(
         &account.user.id,
         request.name.as_deref(),
@@ -329,6 +341,12 @@ async fn delete_api_key(
     AuthenticatedAccount(account): AuthenticatedAccount,
     Path(id): Path<String>,
 ) -> Result<Response, ApiError> {
+    let Some(record) = state.db().find_api_key_by_id(&id)? else {
+        return Err(ApiError::Unauthorized("api key not found".into()));
+    };
+    if record.user_id != account.user.id {
+        return Err(ApiError::Unauthorized("api key not found".into()));
+    }
     state.db().revoke_api_key(&id)?;
     state.db().audit(AuditEvent {
         user_id: Some(&account.user.id),
@@ -348,6 +366,12 @@ async fn rotate_api_key(
         .prefix
         .clone()
         .unwrap_or_else(|| state.settings().security.default_api_key_prefix.clone());
+    let Some(record) = state.db().find_api_key_by_id(&id)? else {
+        return Err(ApiError::Unauthorized("api key not found".into()));
+    };
+    if record.user_id != account.user.id {
+        return Err(ApiError::Unauthorized("api key not found".into()));
+    }
     let record = state.db().rotate_api_key(&id, &prefix)?;
     state.db().audit(AuditEvent {
         user_id: Some(&account.user.id),
